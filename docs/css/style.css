@@ -14,11 +14,23 @@ body {
     background-size: cover;
 }
 
+score {
+    padding: 10px;
+}
+
+
+
 body * {
     position: absolute;
     display: block;
     box-sizing: border-box;
     background-repeat: no-repeat;
+}
+
+hiscore {
+    position: relative;
+    padding: 10px;
+    text-align: right;
 }
 
 splash {

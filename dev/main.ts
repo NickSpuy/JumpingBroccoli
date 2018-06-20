@@ -23,7 +23,7 @@ class Main {
 
     public showGameoverScreen() {
         document.body.innerHTML = ""
-        this.currentscreen = new GameOver(this)
+        this.currentscreen = new GameOver()
     }
 } 
 

@@ -13,51 +13,122 @@ var Gameobject = (function () {
     function Gameobject() {
         this.xMovementLeft = 0;
         this.xMovementRight = 0;
-        this.score = 0;
-        this.times = 0;
-        this.enemies = [];
+        localStorage.colorSetting = '#a4509b';
+        localStorage['colorSetting'] = '#a4509b';
+        localStorage.setItem('colorSetting', '#a4509b');
     }
-    Gameobject.prototype.createBalls = function (spawnTimes) {
-        if (this.times < 5) {
-            for (var i = 0; i < 2; i++) {
-                this.enemies.push(new Enemy());
-            }
-        }
-        else if (this.times < 10) {
-            for (var i = 0; i < 3; i++) {
-                this.enemies.push(new Enemy());
-            }
-        }
-        else if (this.times < 15) {
-            for (var i = 0; i < 4; i++) {
-                this.enemies.push(new Enemy());
-            }
-        }
-        else if (this.times < 20) {
-            for (var i = 0; i < 5; i++) {
-                this.enemies.push(new Enemy());
-            }
-        }
-        else if (this.times < 25) {
-            for (var i = 0; i < 6; i++) {
-                this.enemies.push(new Enemy());
-            }
-        }
-        spawnTimes += 1;
-        this.times = this.times + spawnTimes;
-        console.log(this.times);
-    };
     Gameobject.prototype.getRectangle = function () {
         return this.div.getBoundingClientRect();
     };
-    Gameobject.prototype.checkCollision = function (a, b) {
+    return Gameobject;
+}());
+var GameOver = (function () {
+    function GameOver() {
+        this.div = document.createElement("splash");
+        document.body.appendChild(this.div);
+        this.div.innerHTML = "GAME OVER, MAN";
+    }
+    GameOver.prototype.update = function () {
+    };
+    return GameOver;
+}());
+var Game = (function () {
+    function Game(main) {
+        var _this = this;
+        this.score = 0;
+        this.level = 1;
+        this.times = 0;
+        this.enemies = [];
+        this.hiscore = [];
+        this.main = main;
+        this.player = new Player(37, 39);
+        setInterval(function () { return _this.createMeteors(0, 0); }, 5000);
+        this.scoreElement = document.createElement("score");
+        document.body.appendChild(this.scoreElement);
+        this.hiscoreElement = document.createElement("hiscore");
+        document.body.appendChild(this.hiscoreElement);
+        var hiscores = localStorage.getItem('hiscores') || '';
+        if (hiscores == "") {
+            this.hiscoreElement.innerHTML = "Hiscore: 0 ";
+        }
+        else {
+            this.hiscoreElement.innerHTML = "Hiscore: " + hiscores;
+        }
+    }
+    Game.prototype.createMeteors = function (spawnTimes, level) {
+        if (this.times % 5 == 0) {
+            level += 1;
+            this.level = this.level + level;
+        }
+        for (var i = 0; i < this.level; i++) {
+            this.enemies.push(new Enemy());
+        }
+        spawnTimes += 1;
+        this.times = this.times + spawnTimes;
+    };
+    Game.prototype.checkHiscore = function () {
+        var oldHiscores = localStorage.getItem('hiscores') || '';
+        var currentHiscore = parseInt(oldHiscores);
+        if (this.score > currentHiscore || isNaN(currentHiscore)) {
+            this.hiscore.push(this.score);
+            localStorage.setItem("hiscores", this.hiscore[0]);
+        }
+    };
+    Game.prototype.scoreCount = function (points) {
+        points += 1;
+        this.score = this.score + points;
+        this.scoreElement.innerHTML = "Score: " + this.score;
+    };
+    Game.prototype.checkCollision = function (a, b) {
         return (a.left <= b.right &&
             b.left <= a.right &&
             a.top <= b.bottom &&
             b.top <= a.bottom);
     };
-    return Gameobject;
+    Game.prototype.update = function () {
+        var _this = this;
+        for (var _i = 0, _a = this.enemies; _i < _a.length; _i++) {
+            var enemy = _a[_i];
+            if (this.checkCollision(enemy.getRectangle(), this.player.getRectangle())) {
+                enemy.hitPaddle();
+            }
+            if (enemy.getRectangle().bottom > 1000) {
+                this.main.showGameoverScreen();
+                setInterval(function () { return document.location.reload(true); }, 1000);
+                this.checkHiscore();
+            }
+            enemy.update();
+            requestAnimationFrame(function () { return _this.scoreCount(0); });
+        }
+        this.player.update();
+    };
+    return Game;
 }());
+var Main = (function () {
+    function Main() {
+        this.currentscreen = new StartScreen(this);
+        this.gameLoop();
+    }
+    Main.prototype.gameLoop = function () {
+        var _this = this;
+        this.currentscreen.update();
+        requestAnimationFrame(function () { return _this.gameLoop(); });
+    };
+    Main.prototype.showStart = function () {
+        document.body.innerHTML = "";
+        this.currentscreen = new StartScreen(this);
+    };
+    Main.prototype.showGameScreen = function () {
+        document.body.innerHTML = "";
+        this.currentscreen = new Game(this);
+    };
+    Main.prototype.showGameoverScreen = function () {
+        document.body.innerHTML = "";
+        this.currentscreen = new GameOver();
+    };
+    return Main;
+}());
+window.addEventListener("load", function () { return new Main(); });
 var Enemy = (function (_super) {
     __extends(Enemy, _super);
     function Enemy() {
@@ -85,81 +156,6 @@ var Enemy = (function (_super) {
     };
     return Enemy;
 }(Gameobject));
-var Game = (function (_super) {
-    __extends(Game, _super);
-    function Game(main) {
-        var _this = _super.call(this) || this;
-        _this.main = main;
-        _this.player = new Player(37, 39);
-        _this.scoreElement = document.createElement("score");
-        document.body.appendChild(_this.scoreElement);
-        setInterval(function () { return _this.createBalls(0); }, 5000);
-        return _this;
-    }
-    Game.prototype.scoreCount = function (points) {
-        points += 1;
-        this.score = this.score + points;
-        this.scoreElement.innerHTML = "Score: " + this.score;
-    };
-    Game.prototype.update = function () {
-        var _this = this;
-        for (var _i = 0, _a = this.enemies; _i < _a.length; _i++) {
-            var enemy = _a[_i];
-            if (this.checkCollision(enemy.getRectangle(), this.player.getRectangle())) {
-                enemy.hitPaddle();
-            }
-            if (enemy.getRectangle().bottom > 1000) {
-                this.main.showGameoverScreen();
-                setInterval(function () { return document.location.reload(true); }, 1000);
-            }
-            enemy.update();
-            requestAnimationFrame(function () { return _this.scoreCount(0); });
-        }
-        this.player.update();
-    };
-    return Game;
-}(Gameobject));
-var GameOver = (function () {
-    function GameOver(g) {
-        var _this = this;
-        this.game = g;
-        this.div = document.createElement("splash");
-        document.body.appendChild(this.div);
-        this.div.addEventListener("click", function () { return _this.splashClicked(); });
-        this.div.innerHTML = "GAME OVER, MAN";
-    }
-    GameOver.prototype.update = function () {
-    };
-    GameOver.prototype.splashClicked = function () {
-        this.game.showStart();
-    };
-    return GameOver;
-}());
-var Main = (function () {
-    function Main() {
-        this.currentscreen = new StartScreen(this);
-        this.gameLoop();
-    }
-    Main.prototype.gameLoop = function () {
-        var _this = this;
-        this.currentscreen.update();
-        requestAnimationFrame(function () { return _this.gameLoop(); });
-    };
-    Main.prototype.showStart = function () {
-        document.body.innerHTML = "";
-        this.currentscreen = new StartScreen(this);
-    };
-    Main.prototype.showGameScreen = function () {
-        document.body.innerHTML = "";
-        this.currentscreen = new Game(this);
-    };
-    Main.prototype.showGameoverScreen = function () {
-        document.body.innerHTML = "";
-        this.currentscreen = new GameOver(this);
-    };
-    return Main;
-}());
-window.addEventListener("load", function () { return new Main(); });
 var Player = (function (_super) {
     __extends(Player, _super);
     function Player(moveLeft, moveRight) {
@@ -209,7 +205,7 @@ var StartScreen = (function () {
         this.div = document.createElement("splash");
         document.body.appendChild(this.div);
         this.div.addEventListener("click", function () { return _this.splashClicked(); });
-        this.div.innerHTML = "Click here to start!";
+        this.div.innerHTML = "Click here to start the game!";
     }
     StartScreen.prototype.update = function () {
     };

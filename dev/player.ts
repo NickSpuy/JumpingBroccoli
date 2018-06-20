@@ -1,5 +1,7 @@
 ///<reference path="gameobject.ts"/>
 class Player extends Gameobject {
+    private rightKey: number
+    private leftKey: number
        
     constructor(moveLeft: number, moveRight:number) {
         super()
