@@ -18,5 +18,8 @@ Properties private, protected of public geven is een benodigde in typescript. Ze
 Ik heb op een aantal plekken composition gebruikt. De start en eindschermen krijgen de main class mee zodat er geswitched kan worden van scherm. 
 
 # Peer review
+Afgenomen door: Dominique de Vos 0931703
+Link: https://github.com/Ddvos/Programmeren-4
 
-
+De game ziet er goed uit. Hij speelt goed ik heb geen bugs gevonden. Alle OOP begrippen zitten in de game.
+De game staat op GitHub maar is nog niet online speelbaar. De ReadMe is nog niet compleet. En er ontbreekt nog een van de extra uitdagingen
