@@ -15,6 +15,11 @@ class Main {
         document.body.innerHTML = ""
         this.currentscreen = new StartScreen(this)
     }
+
+    public showControls() {
+        document.body.innerHTML = ""
+        this.currentscreen = new Controls(this)
+    }
     
     public showGameScreen() {
         document.body.innerHTML = ""

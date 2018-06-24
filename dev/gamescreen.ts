@@ -74,7 +74,6 @@ class Game {
                 this.main.showGameoverScreen()
                 setInterval(()=>document.location.reload(true), 1000)
                 this.checkHiscore()
-                
             }  
             enemy.update()
             requestAnimationFrame( () => this.scoreCount(0) )

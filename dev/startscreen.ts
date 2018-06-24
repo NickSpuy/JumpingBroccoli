@@ -1,24 +1,33 @@
 class StartScreen {
 
-    private div: HTMLElement
-    private game : Main
+    private start: HTMLElement
+    private controls: HTMLElement
+    private main : Main
 
-    constructor(g:Main) {
-        
-        this.game = g
-        this.div = document.createElement("splash")
-        document.body.appendChild(this.div)
-        this.div.addEventListener("click", ()=>this.splashClicked())
+    constructor(main: Main) {  
+        this.main = main
+        this.start = document.createElement("text")
+        document.body.appendChild(this.start)
+        this.start.addEventListener("click", ()=>this.startClicked())
 
-        this.div.innerHTML = "Click here to start the game!"
-   
+        this.start.innerHTML = "Play"
+
+        this.controls = document.createElement("text2")
+        document.body.appendChild(this.controls)
+        this.controls.addEventListener("click", ()=>this.controlsClicked())
+
+        this.controls.innerHTML = "Controls"
     }
 
     public update(){
 
     }
 
-    private splashClicked() {
-        this.game.showGameScreen()
+    private controlsClicked() {
+        this.main.showControls()    
+    }
+
+    private startClicked() {
+        this.main.showGameScreen()
     }
 }

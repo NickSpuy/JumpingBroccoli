@@ -9,6 +9,25 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var Controls = (function () {
+    function Controls(main) {
+        var _this = this;
+        this.main = main;
+        this.div = document.createElement("text");
+        document.body.appendChild(this.div);
+        this.div.innerHTML = "Use the arrow keys to move! <br> Click on the meteors to kill them";
+        this.back = document.createElement("back");
+        document.body.appendChild(this.back);
+        this.back.innerHTML = "Back";
+        this.back.addEventListener("click", function () { return _this.textClicked(); });
+    }
+    Controls.prototype.update = function () {
+    };
+    Controls.prototype.textClicked = function () {
+        this.main.showStart();
+    };
+    return Controls;
+}());
 var Gameobject = (function () {
     function Gameobject() {
         this.xMovementLeft = 0;
@@ -24,9 +43,9 @@ var Gameobject = (function () {
 }());
 var GameOver = (function () {
     function GameOver() {
-        this.div = document.createElement("splash");
+        this.div = document.createElement("text");
         document.body.appendChild(this.div);
-        this.div.innerHTML = "GAME OVER, MAN";
+        this.div.innerHTML = "GAME OVER!";
     }
     GameOver.prototype.update = function () {
     };
@@ -118,6 +137,10 @@ var Main = (function () {
         document.body.innerHTML = "";
         this.currentscreen = new StartScreen(this);
     };
+    Main.prototype.showControls = function () {
+        document.body.innerHTML = "";
+        this.currentscreen = new Controls(this);
+    };
     Main.prototype.showGameScreen = function () {
         document.body.innerHTML = "";
         this.currentscreen = new Game(this);
@@ -133,7 +156,7 @@ var Enemy = (function (_super) {
     __extends(Enemy, _super);
     function Enemy() {
         var _this = _super.call(this) || this;
-        _this.div = document.createElement("ball");
+        _this.div = document.createElement("meteor");
         document.body.appendChild(_this.div);
         _this.div.addEventListener("click", function () { return _this.killShip(); });
         _this.xPos = Math.random() * (window.innerWidth - 100);
@@ -160,7 +183,7 @@ var Player = (function (_super) {
     __extends(Player, _super);
     function Player(moveLeft, moveRight) {
         var _this = _super.call(this) || this;
-        _this.div = document.createElement("paddle");
+        _this.div = document.createElement("player");
         document.body.appendChild(_this.div);
         _this.rightKey = moveLeft;
         _this.leftKey = moveRight;
@@ -199,18 +222,25 @@ var Player = (function (_super) {
     return Player;
 }(Gameobject));
 var StartScreen = (function () {
-    function StartScreen(g) {
+    function StartScreen(main) {
         var _this = this;
-        this.game = g;
-        this.div = document.createElement("splash");
-        document.body.appendChild(this.div);
-        this.div.addEventListener("click", function () { return _this.splashClicked(); });
-        this.div.innerHTML = "Click here to start the game!";
+        this.main = main;
+        this.start = document.createElement("text");
+        document.body.appendChild(this.start);
+        this.start.addEventListener("click", function () { return _this.startClicked(); });
+        this.start.innerHTML = "Play";
+        this.controls = document.createElement("text2");
+        document.body.appendChild(this.controls);
+        this.controls.addEventListener("click", function () { return _this.controlsClicked(); });
+        this.controls.innerHTML = "Controls";
     }
     StartScreen.prototype.update = function () {
     };
-    StartScreen.prototype.splashClicked = function () {
-        this.game.showGameScreen();
+    StartScreen.prototype.controlsClicked = function () {
+        this.main.showControls();
+    };
+    StartScreen.prototype.startClicked = function () {
+        this.main.showGameScreen();
     };
     return StartScreen;
 }());

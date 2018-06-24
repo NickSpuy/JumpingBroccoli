@@ -6,7 +6,7 @@ class Player extends Gameobject {
     constructor(moveLeft: number, moveRight:number) {
         super()
 
-        this.div = document.createElement("paddle")
+        this.div = document.createElement("player")
         document.body.appendChild(this.div)
         
         this.rightKey = moveLeft
