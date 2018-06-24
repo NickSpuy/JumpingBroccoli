@@ -4,6 +4,7 @@ De naam komt omdat ik eerst een platformer wilde maken, dit is uiteindelijk niet
 Als extra uitdaging heb ik een highscore systeem toegevoegd. Je score wordt opgeslagen in localstorage en blijft zo staan nadat het spel is afgesloten.
 
 Link: http://www.nickspuy.nl/projects/JumpingBroccoli/docs/
+
 Klassendiagram: https://github.com/NickSpuy/JumpingBroccoli/blob/master/ClassDiagram.png
 
 # Classes
